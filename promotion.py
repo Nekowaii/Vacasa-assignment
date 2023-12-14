@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import shutil
 from pathlib import Path
 
 import joblib
@@ -64,3 +65,9 @@ def models_comparison_report(new_scores, scoring):
         logging.info(
             f"Metric [{metric}{'*' if scoring == metric else ''}]: {new_scores[metric]:.4} ({pct_change:+.2f}%)"
         )
+
+
+def clean_models():
+    if MODEL_DIR.exists():
+        logging.info("Cleaning promoted models...")
+        shutil.rmtree(MODEL_DIR)

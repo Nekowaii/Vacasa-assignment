@@ -1,6 +1,5 @@
 import argparse
 import logging
-import shutil
 from pathlib import Path
 
 import numpy as np
@@ -10,13 +9,12 @@ from sklearn.pipeline import Pipeline
 
 from argument_parser import ModelsAction, ModelParamsAction
 from preprocessing import build_preprocessor, get_selected_features, FEATURES
-from promotion import models_comparison_report, is_new_promoted_model, save_promoted_model
+from promotion import models_comparison_report, is_new_promoted_model, save_promoted_model, clean_models
 from utils import load_data
 
 logging.basicConfig(level=logging.INFO)
 
 SCORERS = ["roc_auc", "recall", "precision", "f1", "accuracy"]
-MODEL_DIR = Path("models")
 
 
 def parse_arguments():
@@ -48,7 +46,7 @@ def parse_arguments():
         metavar="NAME",
     )
     parser.add_argument(
-        "-l", "--label", nargs="*", help=f"Label for classification. Default is %(default)s", default="is_canceled"
+        "-l", "--label", help=f"Label for classification. Default is %(default)s", default="is_canceled"
     )
     parser.add_argument(
         "-t",
@@ -74,9 +72,8 @@ def parse_arguments():
 def main():
     args = parse_arguments()
 
-    if args.clean and MODEL_DIR.exists():
-        logging.info("Cleaning promoted models...")
-        shutil.rmtree(MODEL_DIR)
+    if args.clean:
+        clean_models()
 
     X, y = load_data(args.infile, args.label)
 

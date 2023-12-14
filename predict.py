@@ -25,19 +25,17 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def predict(X):
-    model, _ = load_promoted_model()
-    return model.predict(X)
-
-
 def main():
     args = parse_arguments()
 
     logging.info("Loading data...")
     X_test, y_test = load_data(args.infile, args.label)
 
+    logging.info("Loading model...")
+    model, _ = load_promoted_model()
+
     logging.info("Predicting...")
-    y_pred = predict(X_test)
+    y_pred = model.predict(X_test)
 
     logging.info(classification_report(y_test, y_pred))
 
